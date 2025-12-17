@@ -11,18 +11,21 @@ The first question I foresee people asking is **why write a transpiler instead o
 This is a great question and I think I have a couple of good reasons for this decision.
 
 1. **Portability**
+
 A lot of languages use LLVM for backend compiler infrastructure. I don't blame them, writing the code-gen logic for different architectures would be a pain in the ass. 
 I thought about using LLVM for Quartz but after careful research and consideration, decided against it. 
 C can compile to anything. I want Quartz to be able to be used anywhere (hint-hint at the bigger project I mentioned earlier). 
 By transpiling to C, I achieve the portability that I want and will eventually need, without having to learn LLVM or writing my own code-gen logic.
 
-2. **Simplicity**
+3. **Simplicity**
+
 I sort of alluded to this in point 1. Writing custom code-gen logic for a single architecture is an incredibly challenging task. 
 Now try multiple. Yeah, not happening. That's way out of scope for what I want to get out of this project. 
 I also wanted to avoid using LLVM since learning LLVM would be a pretty time-consuming project on its own. 
 By transpiling, I get to focus on designing a useable language which is my main goal for Quartz.
 
 3. **Iteration Speed**
+
 Quartz's features are going to be simple. I should be able to express Quartz ideas in C. So why wouldn't I just transpile to C and iterate quickly?
 
 ## Why use Quartz when <insert language here> exists?
