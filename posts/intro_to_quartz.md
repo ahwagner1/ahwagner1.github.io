@@ -28,7 +28,7 @@ By transpiling, I get to focus on designing a useable language which is my main 
 
 Quartz's features are going to be simple. I should be able to express Quartz ideas in C. So why wouldn't I just transpile to C and iterate quickly?
 
-## Why use Quartz when <insert language here> exists?
+## Why use Quartz when (insert language here) exists?
 Now I am aware that langauages like C++, Zig, Odin, ... exist. Shit, theres probably been 100s of so called "C-killers" and C is still kicking.
 
 I am **not** trying to kill C.
@@ -72,7 +72,7 @@ struct Point {
 };
 ```
 
-in C would make code much more organized compared to what has to happen currently for the same functionality.
+in C would make code more organized (and less verbose) compared to what has to happen currently for the same functionality.
 
 ### **Type System**
 
@@ -89,7 +89,7 @@ const char *prt1;
 char const *ptr2;
 ```
 
-in which both `ptr1` and `ptr2` are both pointers to a const char is sort of ugly. 
+in which both `ptr1` and `ptr2` are both pointers to a `const char` is sort of ugly. 
 I know that if your familiar with the exact rules of `const` in C, this is probably obvious. 
 
 Lets take a look at something a little more sublte:
@@ -115,7 +115,7 @@ I'm not sure if this should be called something else I'm not aware of, but this 
 I find making and maintaining both header, and source code files cumbersome. I want a single file for the code I'm writing, not two.
 
 ### **Macros and Metaprogramming**
-These topics sort of suck. If you're not familiar with C macros, they are essentially text replacement. Simple macros like
+Macros and metaprogramming in C sort of suck. If you're not familiar with C macros, they are essentially text replacement. Simple macros like
 
 `#define MAX(A, B) ((A) > (B) ? (A) : (B))`
 
@@ -125,7 +125,7 @@ Unfortunatly, C has very limited support for metaprogramming so this might be th
 ### Going forward
 Now how do I plan to implement these features into Quartz?
 
-That is still in the works. Some of these are pretty easy to rework/add to Quartz (getting rid of header files, adding struct methods, adding defer), and others
+That is still in the works. Some of these should be pretty easy to rework/add to Quartz (adding struct methods, adding defer, ...), and others
 are going to be much harder (robust type system, metaprogramming, ...). 
 
 For now, I am focusing on building the initial release of Silica (written in CPP). With the initial release, I plan to build a working transpiler with a limited feature set. The main goal
