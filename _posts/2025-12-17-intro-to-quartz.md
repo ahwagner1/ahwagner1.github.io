@@ -1,3 +1,8 @@
+---
+layout: post
+title: "Intro to Quartz"
+---
+
 # Intro to Quartz
 Quartz is a transpiled systems programming language, heavily inspired by C and Zig. Silica is the name of the Quartz transpiler.
 
