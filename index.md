@@ -26,3 +26,4 @@ Please reach out at akscdev@gmail.com
 Quartz is a systems programming language I am building. It is transpiled instead of compiled and will be used eventually
 to build larger projects.
 - [Intro to Quartz](/2025/12/17/intro-to-quartz.html)
+- [Quartz Type System](/2025/12/17/quartz-type-system.html)
