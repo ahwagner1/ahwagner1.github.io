@@ -1,3 +1,8 @@
+---
+layout: post
+title: "Quartz Type System"
+---
+
 # Quartz Type System
 
 ## STILL A WIP
