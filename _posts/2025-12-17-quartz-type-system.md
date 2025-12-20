@@ -40,9 +40,9 @@ When I write code, I declare variables for things that I plan on using multiple 
 have flags that can be set to warn about unused variables in code. So I already know when I declare a variable, I am likely to see it again.
 
 I'm probably not going to be seeing the type of that variable again. Declaring the type is generally one and done. As far as I'm aware, you cannot re-declare a variable to a new type (at least in C and C++).
-I know type-casting exists, but this doens't change the underlying type of the variable. Type casting just converts the value from one type to the other, not the actual variable itself.
+I know type-casting exists, but this doesn't change the underlying type of the variable. Type casting just converts the value from one type to the other, not the actual variable itself.
 
-And in the same vain as the type, the value is seen less than once on average since you can declare empty variables to use later like so:
+And in the same vain as the type, the value is seen less than once on average since you can declare empty variables to use like so:
 
 ```c
 int x = 10;
@@ -57,11 +57,12 @@ Notice how we see:
 - and initial values only twice
 
 This is at least my POV on things. I'd be welcome to hear other opinions on how people percieve this topic. But for now I'm going to maintain my belief
-that the hierarchy of imporatance in variable declarations goes variable -> type -> value.
+that the hierarchy of importance in variable declarations goes variable -> type -> value.
 
 Going back to our original example of
 
 `int foo = 10;`
+
 You need to start scanning from left to right until you get to the variable `foo`.
 
 Then you need to look left to see the type `int`.
@@ -95,14 +96,14 @@ quux long long int = 10;
 
 Really verbose isn't it.
 
-`long int` and `long` are identical in C
-so are `long long int` and `long long`.
+`long int` and `long` are identical in C.
+So are `long long int` and `long long`.
 
 `int` is optional in these scenarios. It's also optional when using `unsigned`.
 
 So why have all of these confusing options in the first place? I'm sure there's a logical reason, but I really don't see the need for this in Quartz.
 
-So let's just always make sure the programmer has to specify the exact size of their variables. Using stddef.h we would then have something like:
+So let's just always make sure the programmer has to specify the exact size of their variables. Using *stdint.h* we would then have something like:
 
 ```c
 foo uint8_t = 10;
@@ -259,7 +260,8 @@ ptrs i32*[5] = {1, 2, 3, 4, 5};
 Looks a bit cleaner this way IMO. Now there isn't any potential confusion about the difference between accessing and 
 declaration since the array type specifier is tied to the type, and not the variable name.
 
-The one thing I don't love, it the declaration for `ptrs`. 
+The one thing I don't love, is the declaration for `ptrs`.
+
 It almost looks like we are multiplying `i32` and `[5]`. This doesn't quite make sense but I could see 
 people assuming that this is some sort of array expansion technique. Sort of like how Python can do:
 
@@ -290,21 +292,23 @@ int add(int x, int y);
 ```
 
 Lets read it out loud now: "integer add with arguments integer x and integer y"
-Once again, we have the type before what matters more. Lets rework to like we've been doing:
+
+Once again, we have the type before what matters most. Lets rework to like we've been doing:
 
 ```
 add(x i32, y i32) i32;
 ```
 
-This reads as "add with arguments x of type i32, and y of type 32 returns an i32"
+This reads as "add with arguments x of type i32, and y of type i32 returns an i32"
 
 Notice how we never say function though. So how do we differentiate functions from variables?
-I've sort of been holding this topic until we reached functions so I think it's worth visiting here. 
+I've sort of been holding this topic until we reached functions so here goes.
 
-What I think is th easiest way is to add a keyword that specifies functions. In the spirit of being lazy, I probably won't 
+What I think is the easiest way is to add a keyword that specifies functions. In the spirit of being lazy, I probably won't 
 add a keyword to specify a variable. It should be obvious enough with one keyword what is a variable and what is a function.
 
 Now what keyword to use? Well I'm ~~lazy~~ efficient and like typing as little as possible. So how about we add in the keyword `fn`. 
+
 So now our function signatures look something like:
 
 ```
@@ -336,8 +340,8 @@ I could see how this could be confusing. The only thing separating the variable 
 I'm of the opinion that programming should not be formatted by whitespace (looking at you Python). I want Silica to
 ignore as much whitespace as possible.
 
-With this in mind, we need something to differentiate the variable name apart from the type apart from whitespace.
-Theres a couple of different ways to do this I think. We could use the Python/Rust method where we use a colon like:
+With this in mind, we need something to separate the variable name apart from the type besides whitespace.
+Theres a couple of different ways to do this I think. We could use a colon like:
 
 ```
 foo: i32 = 10;
@@ -388,7 +392,7 @@ The type systems are similiar, but I do think I logically analyzed the problems 
 At the end of the day, familiar type systems are actually a benefit since that is just one less friction point for someone 
 trying a new language.
 
-With all of this in mind, lets look at a little snippet of what Quartz code could [^1] look like:
+With all of this in mind, lets look at a little snippet of what Quartz code could[^1] look like:
 
 ```
 fn sum(ptr: []i32*, size: i32) :i32 {
@@ -412,4 +416,5 @@ fn main() :i32 {
 }
 ```
 
+## Footnotes
 [^1]: I use could here because the exact syntax is subject to change (and most likely will)
