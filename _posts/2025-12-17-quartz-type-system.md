@@ -26,7 +26,7 @@ It's quick and easy to read/write. It's obvious what's going on: "integer variab
 
 But is that really good? Lets think for a moment.
 
-A variable decleration really has three main parts to it:
+A variable declaration really has three main parts to it:
 - a type
 - the variable name
 - the value of the variable
@@ -57,7 +57,7 @@ Notice how we see:
 - and initial values only twice
 
 This is at least my POV on things. I'd be welcome to hear other opinions on how people percieve this topic. But for now I'm going to maintain my belief
-that the hierarchy of imporatance in variable declerations goes variable -> type -> value.
+that the hierarchy of imporatance in variable declarations goes variable -> type -> value.
 
 Going back to our original example of
 
@@ -76,7 +76,7 @@ With this in mind, lets rework the above to put the most important element first
 
 Now from a reading perspective, this reads from left to right as "variable foo of type integer has a value of 10"
 
-So going left to right, we have the sections of the variable decleration in descending order which is what I think makes most sense.
+So going left to right, we have the sections of the variable declaration in descending order which is what I think makes most sense.
 
 Ok, so now that we have a starting point, lets keep going.
 
@@ -215,7 +215,7 @@ bar i32* = 10;
 *bar = ...;
 ```
 
-This creates a very clear seperation of init vs dereferencing. *AND* don't worry about the potential footgun C has with pointers, 
+This creates a very clear separation of init vs dereferencing. *AND* don't worry about the potential footgun C has with pointers, 
 Quartz will not have that problem. Rest assured that 
 
 ```
@@ -227,7 +227,7 @@ will both be of type `i32*`.
 
 ## Arrays
 
-Let's look at some C style array declerations.
+Let's look at some C style array declarations.
 
 ```c
 int numbers[5]; // declares an array of 5 integers, no init
@@ -245,16 +245,9 @@ numbers[] i32 = {1, 2, 3, 4, 5};
 ptrs[5] i32*;
 ```
 
-Lets revisit the technique of reading from left to right, like we did at the start.
-Reading the first array decleration from left to right would be something like
-
-"variable numbers is an array of length 5 of i32"
-
-Doesn't quite roll off the tounge, does it? To me it would make more sense to read as 
-
-"variable numbers is an i32 array of length 5"
-
-So we end up with something like this:
+I don't particularily like this. By attaching the brackets to the variable name, it could be confused with accessing an array
+index and modifying the contents. But we still need a way to specify the type is an array. Lets try a couple of 
+different methods below:
 
 ```
 numbers i32[5];
@@ -263,21 +256,30 @@ numbers i32[5] = {1, 2, 3, 4, 5};
 ptrs i32*[5] = {1, 2, 3, 4, 5};
 ```
 
-Looks a bit cleaner this way IMO. The one thing I don't love, it the decleration for `ptrs`. 
-It almsot looks like we are multiplying `i32` and `[5]`. This doesn't quite make sense but I could see 
-people assuming that this is some sort of array expansion technique. Sort of like
+Looks a bit cleaner this way IMO. Now there isn't any potential confusion about the difference between accessing and 
+declaration since the array type specifier is tied to the type, and not the variable name.
+
+The one thing I don't love, it the declaration for `ptrs`. 
+It almost looks like we are multiplying `i32` and `[5]`. This doesn't quite make sense but I could see 
+people assuming that this is some sort of array expansion technique. Sort of like how Python can do:
 
 ```Python
-arr = [0] * 5
+arr = [0]*5
 # arr = [0, 0, 0, 0, 0]
 ```
 
-Unfortunately, I don't see an easy way around this. I could do something like `i32[5]*`. This type would read
-as i32 array of length 5 pointer which makes it sound like a pointer to the array, not an array of pointers.
+We could do something like:
 
-Putting the asterisk before the type would look like `*i32[5]` which reads as "pointer i32 array if length 5". 
-Not super catch either. I think for now I'm just going to keep the syntax `type(*)[N]`. It's not the best visually, but 
-it stays consistent with what I have so far.
+```
+ptrs [5]i32* = {1, 2, 3, 4, 5};
+```
+
+I think I like this, reading from left to right would give us:
+
+"ptrs is an array of 5 i32 pointers"
+
+And we won't have any possible confusion about declaration vs accessing, or array expansion.
+
 
 ## Functions
 Function signatures should probably have types associated. Lets look at a C function real quick to get a feel for what 
@@ -318,5 +320,96 @@ Python does this (optionally) by using the arrow operator `->`. I don't hate thi
 in dereferencing pointers to structs which is probably what will be used in Quartz as well. Am I okay with reusing an operator for two 
 different things? I'm not too sure yet. I'll sleep on it and figure out what I want to do. 
 
+Ok, slept on it and I think I have a solution but it requires revisiting the fundamental structure we have setup. 
+Our fundamental hierarchy for setting up variables and functions is:
 
+"name type value"
 
+```
+foo i32 = 10;
+bar i8 = 'C';
+baz f32 = 3.14;
+```
+
+This works well IMO. However, if you're not familiar with the philosophy behind why the type system is setup this way,
+I could see how this could be confusing. The only thing separating the variable name and the type is whitespace. 
+I'm of the opinion that programming should not be formatted by whitespace (looking at you Python). I want Silica to
+ignore as much whitespace as possible.
+
+With this in mind, we need something to differentiate the variable name apart from the type apart from whitespace.
+Theres a couple of different ways to do this I think. We could use the Python/Rust method where we use a colon like:
+
+```
+foo: i32 = 10;
+bar: i8 = 'C';
+baz: f32 = 3.14;
+
+fn add(x: i32, y: i32) :i32;
+```
+
+Not too bad, I don't hate this. But I also want to consider another method. In C++, when using templates and specifying
+the type, we would use `<>`. Lets borrow this and see what Quartz would look like:
+
+```
+foo <i32> = 10;
+bar <i8> = 'C';
+baz <f32> = 3.14;
+
+fn add(x <i32>, y <i32>) <i32>;
+```
+
+This is a litle more verbose than using the colon. And so far I've really prioritized efficiency when writing the code.
+Other modern languages also have adopted the colon method so for the sake of being a benevolant creator, I won't make you 
+relearn all of your muscle memory.
+
+## All Together
+Before we take a look at what the type system looks like in some code, theres probably a couple of questions/comments that some
+might have. 
+
+1. What about immutability/mutability?
+
+This is a good question and I think it deserves it's own post. I'm leaning towards immutability by default but will 
+visit later.
+
+2. Why not just have a keyword for variables?
+
+I thought about this a decent amount. The two heavy hitters in the modern systems programming language space, Rust and 
+Zig, both have keywords for variables. Rust uses `let` and Zig uses `const` and `var`. I thought about adding one in
+but it feels redundant. To me, the programmers only really need to differentiate between variables and functions. With 
+`fn`, it should be obvious what else is a variable.
+
+3. This just looks like Zig/Rust/...
+
+Yep, they both have better type systems than C IMO.
+I don't program in those langauges, but I have been exposed to them. Going into this mini-project of designing the 
+type system, I had a feeling it would end up looking like the type systems of Zig/Rust. 
+With that in mind, I tried to be as unbiased as possible and lay out a logical path to how I ended up with the type system I did. 
+The type systems are similiar, but I do think I logically analyzed the problems I had with C, and "solved" them so to say.
+At the end of the day, familiar type systems are actually a benefit since that is just one less friction point for someone 
+trying a new language.
+
+With all of this in mind, lets look at a little snippet of what Quartz code could [^1] look like:
+
+```
+fn sum(ptr: []i32*, size: i32) :i32 {
+    sum: i32 = 0;
+    for (i: i32 = 0; i < size; i++) {
+        sum += ptr[i];
+    }
+    
+    return sum;
+}
+
+fn main() :i32 {
+    x: i32 = 100;
+    y: i32 = x++;
+
+    ptrs [2]i32* = {&x, &y};
+
+    total_sum: i32 = sum(ptrs, 2);
+    
+    return 0;
+}
+```
+
+[^1]: I use could here because the exact syntax is subject to change (and most likely will)
