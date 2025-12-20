@@ -135,7 +135,9 @@ baz f32 = 3.14;
 
 Not too bad, quick to write, quick to read as well.
 
-So we have numeric types defined, the only things really remaining are pointers and arrays. Lets tackle pointers next.
+So we have numeric types defined, the only things really remaining are pointers, arrays, and function signatures.
+
+## Pointers
 
 In C we could do something like this to define a pointer:
 
@@ -213,4 +215,108 @@ bar i32* = 10;
 *bar = ...;
 ```
 
-This creates a very clear seperation of init vs dereferencing. *AND* we don't really need to worry about the footgun from C since we put the type after the variable(s).
+This creates a very clear seperation of init vs dereferencing. *AND* don't worry about the potential footgun C has with pointers, 
+Quartz will not have that problem. Rest assured that 
+
+```
+foo, bar i32*;
+```
+
+will both be of type `i32*`.
+
+
+## Arrays
+
+Let's look at some C style array declerations.
+
+```c
+int numbers[5]; // declares an array of 5 integers, no init
+int numbers[5] = {1, 2, 3, 4, 5}; // same as above but with init
+int numbers[] = {1, 2, 3, 4, 5}; // same as above but size is inferred
+int *ptrs[5]; // array of length 5 storing integer pointers
+```
+
+Not too bad, lets rework these to fit the Quartz type style
+
+```
+numbers[5] i32;
+numbers[5] i32 = {1, 2, 3, 4, 5};
+numbers[] i32 = {1, 2, 3, 4, 5};
+ptrs[5] i32*;
+```
+
+Lets revisit the technique of reading from left to right, like we did at the start.
+Reading the first array decleration from left to right would be something like
+
+"variable numbers is an array of length 5 of i32"
+
+Doesn't quite roll off the tounge, does it? To me it would make more sense to read as 
+
+"variable numbers is an i32 array of length 5"
+
+So we end up with something like this:
+
+```
+numbers i32[5];
+numbers i32[5] = {1, 2, 3, 4, 5};
+numbers i32[5] = {1, 2, 3, 4, 5};
+ptrs i32*[5] = {1, 2, 3, 4, 5};
+```
+
+Looks a bit cleaner this way IMO. The one thing I don't love, it the decleration for `ptrs`. 
+It almsot looks like we are multiplying `i32` and `[5]`. This doesn't quite make sense but I could see 
+people assuming that this is some sort of array expansion technique. Sort of like
+
+```Python
+arr = [0] * 5
+# arr = [0, 0, 0, 0, 0]
+```
+
+Unfortunately, I don't see an easy way around this. I could do something like `i32[5]*`. This type would read
+as i32 array of length 5 pointer which makes it sound like a pointer to the array, not an array of pointers.
+
+Putting the asterisk before the type would look like `*i32[5]` which reads as "pointer i32 array if length 5". 
+Not super catch either. I think for now I'm just going to keep the syntax `type(*)[N]`. It's not the best visually, but 
+it stays consistent with what I have so far.
+
+## Functions
+Function signatures should probably have types associated. Lets look at a C function real quick to get a feel for what 
+it could look like:
+
+```c
+int add(int x, int y);
+```
+
+Lets read it out loud now: "integer add with arguments integer x and integer y"
+Once again, we have the type before what matters more. Lets rework to like we've been doing:
+
+```
+add(x i32, y i32) i32;
+```
+
+This reads as "add with arguments x of type i32, and y of type 32 returns an i32"
+
+Notice how we never say function though. So how do we differentiate functions from variables?
+I've sort of been holding this topic until we reached functions so I think it's worth visiting here. 
+
+What I think is th easiest way is to add a keyword that specifies functions. In the spirit of being lazy, I probably won't 
+add a keyword to specify a variable. It should be obvious enough with one keyword what is a variable and what is a function.
+
+Now what keyword to use? Well I'm ~~lazy~~ efficient and like typing as little as possible. So how about we add in the keyword `fn`. 
+So now our function signatures look something like:
+
+```
+fn add(x i32, y i32) i32;
+```
+
+This now reads as "function add with arguments x of type i32, and y of type i32 returns i32". 
+But wait, what about that ending. I can hear you asking "you just said *returns*, which technically is implied" and I would say thats 
+correct. I feel like it's extremely important to be explicit when programming. That floating `i32` at the end of the signature could mean 
+anything to someone not familiar with Quartz. So the question now is how do we explicitly specify that the ending type is the return type.
+
+Python does this (optionally) by using the arrow operator `->`. I don't hate this. But at the same time, in C the arrow operator is used 
+in dereferencing pointers to structs which is probably what will be used in Quartz as well. Am I okay with reusing an operator for two 
+different things? I'm not too sure yet. I'll sleep on it and figure out what I want to do. 
+
+
+
