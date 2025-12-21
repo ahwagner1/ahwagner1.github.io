@@ -27,3 +27,4 @@ Quartz is a systems programming language I am building. It is transpiled instead
 to build larger projects.
 - [Intro to Quartz](/2025/12/17/intro-to-quartz.html)
 - [Quartz Type System](/2025/12/17/quartz-type-system.html)
+- [Quartz Grammar](/2025/12/20/quartz-grammar.html)
