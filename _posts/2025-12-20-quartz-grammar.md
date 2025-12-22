@@ -191,10 +191,10 @@ So with the bare bones grammar built, lets expand it a bit to support our full t
 ```
 program         = declaration* ;
 declaration     = var-declaration | fn-declaration ;
-var-declaration = indentifier ":" type ["=" expression] ";" ;
-fn-declaration  = "fn" identifier "(" param-list ")" ":" type block;
+var-declaration = IDENTIFIER ":" type ["=" expression] ";" ;
+fn-declaration  = "fn" IDENTIFIER "(" param-list ")" ":" type block;
 param-list      = [param ( "," param )*] ;
-param           = identifier ":" type ;
+param           = IDENTIFIER ":" type ;
 
 type            = type-prefix* base-type type-suffix* ;
 base-type       = "i8" | "i16" | "i32" | "i64"
@@ -217,6 +217,124 @@ We now have rules for supporting all of our types, even the complex ones. `type-
 We have gotten up to actual assignment with this grammar. Variable assignment is surprisingly tricky. Operator precedence is important and 
 these rules will determine operator precedence in Quartz. We all know PEMDAS or one of its variants right? Well how stupid would it be if 
 we messed up our grammar rules and now addition happens before multiplication?
+
+Generally, the deeper you go in the grammer, the higher the precedence. 
+
+So expanding the grammar above, we could do something like this:
+
+```
+1.  program         = declaration* ;
+2.  declaration     = var-decl | fn-decl ;
+3.  var-decl        = IDENTIFIER ":" type ["=" expression] ";" ;
+4.  fn-decl         = "fn" IDENTIFIER "(" param-list ")" ":" type block;
+5.  param-list      = [param ( "," param )*] ;
+6.  param           = IDENTIFIER ":" type ;
+ 
+7.  type            = type-prefix* base-type type-suffix* ;
+8.  base-type       = "i8" | "i16" | "i32" | "i64"
+                    | "u8" | "u16" | "u32" | "u64"
+                    | "f32" | "f64" ;
+9.  type-prefix     = ( "[" expression "]" ) ;
+10. type-suffix     = "*";
+
+11. block           = "{" statement* "}" ;
+12. statement       = var-decl | return-stmt | expr-stmt | if-stmt | for-stmt ;
+13. return-stmt     = "return" expression ";" ;
+14. expr-stmt       = expression ";" ;
+
+15. expression = assignment;
+16. assignment = equality ("=" equality)* ;
+17. equality   = comparison (("==" | "!=") comparison)* ;
+18. term       = factor (("+" | "-") factor)* ;
+19. factor     = unary ("!" | "-") unary | primary ;
+20. primary    = NUMBER | IDENTIFIER | "(" expression ")" ;
+```
+
+With this, we should have a pretty simple grammar built. This should be able to handle simple variable and functions declerations.
+
+Let's walk through these rules and see if we can make a simple Quartz function that adds two 
+numbers and then returns the value of the sum.
+
+Lets start with rules 1 and 2. We are declaring a function so we jump to rule 4. 
+
+So far we have 1 -> 2 -> 4. In rule 4, our output now looks like:
+
+```
+fn identifier(PARAM_LIST) :TYPE BLOCK;
+```
+
+Anything in all caps is a non-terminal, and everything else if a terminal. 
+
+What non-terminal should be expand first? Let's work from left to right. 
+
+Expanding on *PARAM_LIST* has us jump to rule 5. So now our code looks like this:
+
+```
+fn identifier([PARAM ("," PARAM)*]) :TYPE BLOCK;
+```
+
+This is essentially saying, we could have variable number of parameters inside the function declaration.
+
+For the sake of brevity, I'll expand this in a single step but document the rules as I would see them.
+
+Reminder, so far we have done: 1 -> 2 -> 4 -> 5.
+
+Expanding *PARAMS* all the way to non-terminals has us going on the following path:
+
+1 -> 2 -> 4 -> 5 -> 6 -> 7 -> 8 -> 6 -> 7 -> 8 with the code now looking like this:
+
+```
+fn add(x: i32, y: i32) :TYPE BLOCK
+```
+
+Since identifiers are terminal, I have replace them with actual names so it's easier to see
+what function we are building.
+
+
+Let's now expand the return type and block. 
+
+I will truncate the sequence in the following steps to make it easier to read. I will include
+the previous steps last sequence to make it easier to follow. Here is the udpated sequence
+for expanding the return type:
+
+... -> 8 (prev step) -> 7 -> 8 (return type expanded)
+
+And here is the updated sequence for expanding the block:
+
+... -> 8 (return type) -> 11
+
+Now our code looks like this:
+
+```
+fn add(x: i32, y: i32) :i32 {
+    STATEMENT
+}
+```
+
+Expanding this to generate a return statement that returns the input params leaves us with:
+
+... -> 11 -> 12 -> 13 -> 15 -> 16 -> 17 -> 18 -> 19 -> 20 -> 19 -> 20
+
+which yields:
+
+```
+fn add(x: i32, y: i32) :i32 {
+    return x + y;
+}
+```
+
+So our full sequence for building out the above function looks like this:
+
+```
+1 -> 2 -> 4 -> 5 -> 6 -> 7 -> 8 -> 6 -> 7 -> 8 ->
+7 -> 8 -> 11 -> 12 -> 13 -> 15 -> 16 -> 17 -> 18 -> 
+19 -> 20 -> 19 -> 20
+```
+
+You can see how recursive descent can be a bit inneficient now I bet. 
+
+Thats a minimum of 23 function calls to parse that bit of source code.
+
 
 ### Footnotes
 [^1]: 
