@@ -44,7 +44,8 @@ They could release a patch that completely regresses a feature you rely on and t
 With systems programming, there is less of this. I generally don't need to import an entire framework to rely on.
 Do I write all code from scratch? Absolutely not. But you can bet if I'm importing a library, I've read the documentation and source code to understand how things work.
 
-This is what peaked my interest in embedded development. In terms of developing software, it's about as low as you can go without routing the wires manually on the chips. You as the developer have complete control over the entire system. 
+This is what piqued my interest in embedded development. In terms of developing software, it's about as low as you can go without routing the wires manually on the chips. 
+You as the developer have complete control over the entire system. 
 I like this, it makes you really understand the problem statment, and think about the entire process.
 
 After all, software is only half of the equation. 
@@ -59,9 +60,11 @@ I mentioned in the previous section that I worked on a React app for my senior p
 I wasn't a fan of that since a lot of the programming involved me importing other libraries and using those.
 For the most part, I wasn't solving problems. I was implementing a design that someone else had come up with.
 
-A major reason I fell in love with programming is that there is (generally) on "right" answer. 
+A major reason I fell in love with programming is that there is (generally) no "right" answer. 
 You have creative freedom to solve the problem as you see fit. You can design and build the solution from scratch.
 Importing libraries limits your creative freedom.
+
+I understand how important libraries has it's place in larger systems, but I'm drawn more to domains that enable me to have full control.
 
 Unfortunately, these days it seems like there is a library for everything and the solution is to just import XYZ and build as fast as possible.
 
@@ -72,12 +75,13 @@ Hiding the challenges by importing a library that does all the heavy lifting for
 #### Quality
 Chips are the faster they have ever been, and more accessible than ever, and yet so many applications don't run well.
 
-Just to name a few:
+Just to name a few examples of what I mean:
 - Windows 11 did not have a great 2025 in terms of bugs. 
 I think my favorite just from pure irony is the bug where task manager duplicated itself.
 
 - Discord just recently announced that they were trying out a feature where Discord restarts automatically if it's using more than 4GB of RAM. 
-Like how sad is that we can put man on the moon with 2KB of RAM, and yet Discord itself can consume 2,000,000 times more memory.
+To be fair, this is an experimental feature for an edge case and Discord is working on optimizing memory usage.
+But it is fascinating how we can put man on the moon with 2KB of RAM and modern desktop applications can use millions of times more memory.
 
 I know this is probably an apples to oranges comparison, but at the same time it points to a central problem with software these days.
 
@@ -97,7 +101,7 @@ Embedded lets me:
 - solve real problems
 - write optimized software
 
-As I learn more, it'll be interesting to come back to this to see what has changed and how far I've progressed
+As I learn more, it'll be interesting to come back to this to see what's changed and how far I've progressed
 
 #### So where am I at in my learning so far 
 Right now, I've been self teaching myself on some STM32F401RE Nucleo boards. 
@@ -111,4 +115,5 @@ Sifting through the manuals/documents to figure out all that needs to be done is
 
 But I'm loving it. It's hard, but that's what makes it fun and worth doing.
 
-If anyone is reading this and wants to watch the progress, all my projects can be found [here](www.github.com/ahwagner1/embedded)
+
+If anyone is reading this and wants to watch the progress, all my projects can be found [here](https://github.com/ahwagner1/embedded)
