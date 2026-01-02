@@ -22,9 +22,13 @@ Constructive criticism is entirely welcome.
 Please reach out at akscdev@gmail.com
 
 # Projects
+### Embedded
+I want to be an embeeded developer. The only problem is that I have no experience in embedded development. I'll write about my experience learning embedded.
+- [Why Embedded?](/2026/01/02/why-embedded.html)
+
+
 ### Quartz
-Quartz is a systems programming language I am building. It is transpiled instead of compiled and will be used eventually
-to build larger projects.
+Quartz is a systems programming language I am building. It is transpiled instead of compiled and will be used eventually to build larger projects. This is a for fun project, not currently a priority.
 - [Intro to Quartz](/2025/12/17/intro-to-quartz.html)
 - [Quartz Type System](/2025/12/17/quartz-type-system.html)
 - [Quartz Grammar](/2025/12/20/quartz-grammar.html)
