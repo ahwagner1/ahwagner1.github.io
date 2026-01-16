@@ -26,6 +26,7 @@ Please reach out at akscdev@gmail.com
 I want to be an embeeded developer. The only problem is that I have no experience in embedded development. I'll write about my experience learning embedded.
 - [Why Embedded?](/2026/01/02/why-embedded.html)
 - [UART](/2026/01/04/uart.html)
+- [Lidar Project](/2026/01/15/lidar-project.html)
 
 
 ### Quartz
